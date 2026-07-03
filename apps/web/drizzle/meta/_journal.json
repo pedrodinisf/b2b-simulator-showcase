@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1782853716272,
+      "tag": "0000_regular_johnny_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1782865732400,
+      "tag": "0001_tan_tag",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1782928136416,
+      "tag": "0002_closed_white_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1782932014115,
+      "tag": "0003_flat_jubilee",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783001470271,
+      "tag": "0004_nebulous_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1783002903516,
+      "tag": "0005_flowery_stellaris",
+      "breakpoints": true
+    }
+  ]
+}

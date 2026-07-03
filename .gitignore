@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*venv*/
+pv/
+pdfvenv/
+
+# Node
+node_modules/
+
+# Node / TypeScript build output
+dist/
+build/
+*.tsbuildinfo
+coverage/
+
+# SvelteKit / Vite
+.svelte-kit/
+.vite/
+
+# SQLite
+*.db
+*.db-wal
+*.db-shm
+
+# Served report PDFs (regenerable; swept after ~3 days). Prod uses REPORTS_DIR on the volume.
+.reports/
+
+# Playwright e2e artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Backups / scratch
+*.bak
+*.bak.html
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

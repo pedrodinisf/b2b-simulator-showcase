@@ -1,0 +1,26 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: b2bsim-web
+    container_name: b2bsim-web
+    # Email secrets (EMAIL_API_KEY, EMAIL_FROM, EMAIL_DRIVER) and the auth secret come from a
+    # server-side .env next to this file — never committed. Non-secret infra config is fixed below.
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: file:/data/app.db
+      REPORTS_DIR: /data/reports
+      ORIGIN: https://example.com
+      HOST: 0.0.0.0
+      PORT: "3000"
+    volumes:
+      - appdata:/data
+    # Bind to localhost only; a reverse proxy terminates HTTPS in front of it.
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+
+volumes:
+  appdata:

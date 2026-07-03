@@ -1,0 +1,61 @@
+name: CI + Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Serialise deploys so two quick pushes don't race on the host.
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: Test + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4 # reads pnpm version from package.json "packageManager"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm --filter @b2bsim/web typecheck
+      - run: pnpm --filter @b2bsim/web build
+
+  deploy:
+    name: Deploy
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      # The trailing command is ignored: the deploy key is locked to a forced command on the
+      # host that runs `git pull` + `docker compose up -d --build`. A leaked key can only
+      # redeploy, never open a shell. Host/port/key/user all come from repo secrets.
+      - name: Trigger redeploy over SSH
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/ci && chmod 600 ~/.ssh/ci
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/ci \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 \
+            -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" deploy
+
+      # `docker compose up -d` returns success as soon as the container is CREATED, not once
+      # it's actually serving — a crash-looping container (e.g. a missing required secret;
+      # see docker-entrypoint.sh) would otherwise leave this workflow green. Poll the public
+      # site so a broken deploy is reported here, not discovered later by a user.
+      - name: Verify the site is up
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 10 "${{ secrets.SITE_URL }}/" || true)
+            if [ "$code" = "200" ]; then
+              echo "Site is up (HTTP $code) after $i attempt(s)."
+              exit 0
+            fi
+            echo "Attempt $i/10: HTTP $code, retrying in 5s…"
+            sleep 5
+          done
+          echo "::error::Site did not return HTTP 200 after deploy (last status: $code)"
+          exit 1

@@ -1,0 +1,27 @@
+# Build context = repo root (for the web image). Keep node_modules, build output, secrets,
+# and local DBs out of the image (deps are installed fresh).
+.git
+.github
+.claude
+**/node_modules
+**/build
+**/.svelte-kit
+**/.vite
+
+# Secrets + local data — NEVER copy into the image
+**/.env
+**/.env.*
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/.reports
+**/.reports-*
+
+# Test / playwright artifacts
+**/test-results
+**/playwright-report
+**/playwright/.cache
+
+data
+
+*.log
