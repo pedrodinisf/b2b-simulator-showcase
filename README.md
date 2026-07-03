@@ -1,4 +1,5 @@
 # B2B Simulator — Portugal contractor tax comparison
+<img width="1558" height="924" alt="image" src="https://github.com/user-attachments/assets/37cd427a-a67d-44fc-81db-aee641ec9958" />
 
 A bilingual (**PT-PT / EN-UK**) web app that compares how a Portuguese independent contractor can
 operate — sole trader (*ENI*) vs single-member private limited company (*Unipessoal Lda.*) — and
